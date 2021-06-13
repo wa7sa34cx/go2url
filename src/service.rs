@@ -38,3 +38,4 @@ async fn hello() -> Result<Response<Body>> {
 async fn go() -> Result<Response<Body>> {
     Ok(Response::new(Body::from("https://facebook.com")))
 }
+
