@@ -4,7 +4,7 @@ pub async fn make(req: Request<Body>) -> Result<Response<Body>> {
     match (req.method(), req.uri().path()) {
         (&Method::GET, "/") => hello().await,
         (&Method::GET, "/health_check") => health_check().await,
-        (&Method::GET, "/go") => go().await,
+        (&Method::GET, "/go") => go(req).await,
         _ => not_found().await,
     }
 }
@@ -35,7 +35,16 @@ async fn hello() -> Result<Response<Body>> {
     Ok(Response::new(Body::from("Hello!")))
 }
 
-async fn go() -> Result<Response<Body>> {
-    Ok(Response::new(Body::from("https://facebook.com")))
-}
+async fn go(req: Request<Body>) -> Result<Response<Body>> {
+    let query = req.uri().query();
+    match query {
+        Some(q) => Ok(Response::builder()
+            .status(StatusCode::MOVED_PERMANENTLY)
+            .header("Location", q.to_owned())
+            .body(Body::empty())
+            .unwrap()),
 
+        // Ok(Response::new(Body::from(q.to_owned()))),
+        None => file_not_found().await,
+    }
+}
