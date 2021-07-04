@@ -1,22 +1,29 @@
-mod service;
-
-use hyper::service::{make_service_fn, service_fn};
-use hyper::Server;
-use std::net::SocketAddr;
+mod db;
+use db::DB;
+use dotenv::dotenv;
+use std::env;
+use std::env::VarError;
+use std::process;
 
 #[tokio::main]
 async fn main() {
-    let addr = SocketAddr::from(([127, 0, 0, 1], 3000));
+    // let db = DB::from("example.txt");
 
-    let make_service = make_service_fn(|_| async {
-        Ok::<_, hyper::Error>(service_fn(move |req| service::make(req)))
+    // let db = DB::from("example.txt").unwrap_or_else(|err| {
+    //     eprintln!("Problem parsing arguments: {}", err);
+    //     process::exit(1);
+    // });
+
+    dotenv().ok();
+    let db_path = env::var("DB_PATH").expect("DB_PATH must be set");
+
+    let path = db_path + "example.txt";
+
+    // let db = DB::establish(&path).expect(&format!("Error connecting to {}", path));
+    let db = DB::establish(&path).unwrap_or_else(|err| {
+        eprintln!("{}", err);
+        process::exit(1);
     });
 
-    let server = Server::bind(&addr).serve(make_service);
-
-    println!("Listening on http://{}", addr);
-
-    if let Err(e) = server.await {
-        eprintln!("Server error: {}", e);
-    }
+    println!("{:#?}", db);
 }

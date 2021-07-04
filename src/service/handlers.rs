@@ -1,10 +1,10 @@
 use hyper::{Body, Request, Response, Result, StatusCode};
 
 /// Page not found
-pub async fn not_found() -> Result<Response<Body>> {
+pub async fn method_not_allowed() -> Result<Response<Body>> {
     Ok(Response::builder()
-        .status(StatusCode::NOT_FOUND)
-        .body(Body::from("Page not found"))
+        .status(StatusCode::METHOD_NOT_ALLOWED)
+        .body(Body::from("Method Not Allowed"))
         .unwrap())
 }
 

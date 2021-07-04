@@ -7,7 +7,7 @@ pub async fn make(req: Request<Body>) -> Result<Response<Body>> {
         (&Method::GET, "/") => handlers::hello().await,
         (&Method::GET, "/health_check") => handlers::health_check().await,
         (&Method::GET, "/go") => handlers::go(req).await,
-        _ => handlers::not_found().await,
+        _ => handlers::method_not_allowed().await,
     }
 }
 
