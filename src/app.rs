@@ -1,20 +1,8 @@
-use crate::validate;
 use crate::db::DB;
-use dotenv::dotenv;
-use std::env;
+use crate::db::error::Error;
 
-fn get_line_from_db(filename: &str) -> Result<String, &'static str> {
-    if !validate::txt_file(filename) {
-        return Err("Invalid file name. Expected: example.txt");
-    }
-
-    let db = DB::establish(&filename).unwrap_or_else(|e| {
-        return Err(e);
-    });
-
-    let line = db.get_rand_line().unwrap_or_else(|e| {
-        return Err(e);
-    });
-
-    line
+pub fn get_rand_line_from_db(filename: &str) -> Result<String, Error> {
+    let db = DB::establish(&filename)?;
+    let line = db.get_rand_line()?;
+    Ok(line)
 }

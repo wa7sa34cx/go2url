@@ -1,5 +1,6 @@
 use hyper::{Body, Request, Response, Result, StatusCode};
 use crate::app;
+use crate::validate;
 
 /// Method Not Allowed
 pub async fn method_not_allowed() -> Result<Response<Body>> {
@@ -9,16 +10,8 @@ pub async fn method_not_allowed() -> Result<Response<Body>> {
         .unwrap())
 }
 
-/// File not found
-pub async fn file_not_found() -> Result<Response<Body>> {
-    Ok(Response::builder()
-        .status(StatusCode::NOT_FOUND)
-        .body(Body::from("File not found"))
-        .unwrap())
-}
-
 /// Internal Server Error
-pub async fn error(e: &'static str) -> Result<Response<Body>> {
+pub async fn error(e: String) -> Result<Response<Body>> {
     Ok(Response::builder()
         .status(StatusCode::INTERNAL_SERVER_ERROR)
         .body(Body::from(e))
@@ -39,12 +32,16 @@ pub async fn hello() -> Result<Response<Body>> {
 pub async fn go(req: Request<Body>) -> Result<Response<Body>> {
     let filename = match req.uri().query() {
         Some(q) => q,
-        None => return error("Expected filename in query").await,
+        None => return error(String::from("Expected filename in query")).await,
     };
 
-    let url = match app::get_line_from_db(filename) {
+    if !validate::txt_file(filename) {
+        return error(String::from("Invalid file name. Expected: example.txt")).await;
+    }
+
+    let url = match app::get_rand_line_from_db(filename) {
         Ok(line) => line,
-        Err(e) => return error(e).await,
+        Err(e) => return error(e.to_string()).await,
     };
 
     Ok(Response::builder()
@@ -53,4 +50,3 @@ pub async fn go(req: Request<Body>) -> Result<Response<Body>> {
         .body(Body::empty())
         .unwrap())
 }
-
