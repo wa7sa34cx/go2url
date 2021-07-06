@@ -11,10 +11,19 @@ pub struct DB {
 }
 
 impl DB {
-    pub fn establish(file: &str) -> Result<DB, &'static str> {
-        match File::open(file) {
+    pub fn establish(filename: &str) -> Result<DB, &'static str> {
+        dotenv().ok();
+
+        let db_path = match env::var("DB_PATH") {
+            Ok(s) => s,
+            Err(_) => return Err("DB_PATH must be set in .env"),
+        };
+
+        let file = db_path + filename;
+
+        match File::open(&file) {
             Ok(_) => Ok(DB {
-                file: file.to_string(),
+                file,
             }),
             Err(_) => Err("Error establishing a database connection"),
         }
