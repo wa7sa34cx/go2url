@@ -14,3 +14,4 @@ dotenv = "0.15.0"
 hyper = { version = "0.14", features = ["full"] }
 tokio = { version = "1", features = ["full"] }
 tokio-util = "0.6.7"
+regex = "1.5"

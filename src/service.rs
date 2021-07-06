@@ -1,5 +1,4 @@
-mod handlers;
-
+use crate::handlers;
 use hyper::{Body, Method, Request, Response, Result};
 
 pub async fn make(req: Request<Body>) -> Result<Response<Body>> {
@@ -10,4 +9,3 @@ pub async fn make(req: Request<Body>) -> Result<Response<Body>> {
         _ => handlers::method_not_allowed().await,
     }
 }
-
