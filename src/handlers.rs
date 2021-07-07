@@ -39,7 +39,7 @@ pub async fn go(req: Request<Body>) -> Result<Response<Body>> {
         return error(String::from("Invalid file name. Expected: example.txt")).await;
     }
 
-    let url = match app::get_rand_line_from_db(filename) {
+    let url = match app::get_rand_line_from_db(filename).await {
         Ok(line) => line,
         Err(e) => return error(e.to_string()).await,
     };

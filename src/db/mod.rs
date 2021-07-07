@@ -1,44 +1,45 @@
 pub mod error;
 
 use dotenv::dotenv;
-use error::Error;
+use error::DbError;
 use rand::seq::SliceRandom;
 use std::env;
-use std::fs;
-use std::fs::File;
+use tokio::fs::File;
+use tokio::fs;
 
-type DBResult<T> = Result<T, Error>;
+type DbResult<T> = Result<T, DbError>;
 
 #[derive(Debug)]
-pub struct DB {
+pub struct Db {
     file: String,
 }
 
-impl DB {
-    pub fn establish(filename: &str) -> DBResult<DB> {
+impl Db {
+    pub async fn establish(filename: &str) -> DbResult<Db> {
         dotenv().ok();
 
-        let db_path = match env::var("DB_PATH") {
-            Ok(s) => s,
-            Err(_) => return Err(Error::NoEnv),
-        };
+        let db_path = env::var("DB_PATH")?;
+        // let db_path = match env::var("DB_PATH") {
+        //     Ok(s) => s,
+        //     Err(_) => return Err(Error::NoEnv),
+        // };
 
         let file = db_path + filename;
 
-        match File::open(&file) {
-            Ok(_) => Ok(DB { file }),
-            Err(_) => Err(Error::ErrConnection),
+        match File::open(&file).await {
+            Ok(_) => Ok(Db { file }),
+            Err(_) => Err(DbError::ErrConnection),
         }
     }
 
-    pub fn get_rand_line(&self) -> DBResult<String> {
-        let contents = match fs::read_to_string(&self.file) {
+    pub async fn get_rand_line(&self) -> DbResult<String> {
+        let contents = match fs::read_to_string(&self.file).await {
             Ok(s) => s,
-            Err(_) => return Err(Error::ErrReading),
+            Err(_) => return Err(DbError::ErrReading),
         };
 
         if contents.is_empty() {
-            return Err(Error::EmptyDB);
+            return Err(DbError::EmptyDb);
         }
 
         let lines: Vec<&str> = contents.split('\n').collect();
@@ -46,7 +47,7 @@ impl DB {
 
         match line {
             Some(line) => Ok(line.to_string()),
-            None => Err(Error::ErrRand),
+            None => Err(DbError::ErrRand),
         }
     }
 }
