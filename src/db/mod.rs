@@ -19,10 +19,6 @@ impl Db {
         dotenv().ok();
 
         let db_path = env::var("DB_PATH")?;
-        // let db_path = match env::var("DB_PATH") {
-        //     Ok(s) => s,
-        //     Err(_) => return Err(Error::NoEnv),
-        // };
 
         let file = db_path + filename;
 
