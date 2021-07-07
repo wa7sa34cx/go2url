@@ -9,6 +9,7 @@ use tokio::fs;
 
 type DbResult<T> = Result<T, DbError>;
 
+// My own simple file read based database
 #[derive(Debug)]
 pub struct Db {
     file: String,
@@ -16,24 +17,23 @@ pub struct Db {
 
 impl Db {
     pub async fn establish(filename: &str) -> DbResult<Db> {
+        // Specify in .env where the directory with files is located
         dotenv().ok();
-
         let db_path = env::var("DB_PATH")?;
 
+        // Create full path to file
         let file = db_path + filename;
 
-        match File::open(&file).await {
-            Ok(_) => Ok(Db { file }),
-            Err(_) => Err(DbError::ErrConnection),
-        }
+        // If file opening doesn't return the Error, 
+        // so connection can be established
+        let _f = File::open(&file).await?;
+
+        Ok(Db { file })
     }
 
     pub async fn get_rand_line(&self) -> DbResult<String> {
-        let contents = match fs::read_to_string(&self.file).await {
-            Ok(s) => s,
-            Err(_) => return Err(DbError::ErrReading),
-        };
-
+        let contents = fs::read_to_string(&self.file).await?;
+            
         if contents.is_empty() {
             return Err(DbError::EmptyDb);
         }

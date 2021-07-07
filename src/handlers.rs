@@ -28,7 +28,7 @@ pub async fn hello() -> Result<Response<Body>> {
     Ok(Response::new(Body::from("Hello!")))
 }
 
-/// 301 redirect
+/// 307 redirect
 pub async fn go(req: Request<Body>) -> Result<Response<Body>> {
     let filename = match req.uri().query() {
         Some(q) => q,
@@ -45,7 +45,7 @@ pub async fn go(req: Request<Body>) -> Result<Response<Body>> {
     };
 
     Ok(Response::builder()
-        .status(StatusCode::MOVED_PERMANENTLY)
+        .status(StatusCode::TEMPORARY_REDIRECT)
         .header("Location", url)
         .body(Body::empty())
         .unwrap())

@@ -1,12 +1,12 @@
 use std::fmt;
-use std::error::Error;
-use std::env::VarError;
+use std::error;
+use std::io;
+use std::env;
 
 #[derive(Debug)]
 pub enum DbError {
-    NoEnv,
-    ErrConnection,
-    ErrReading,
+    VarError(env::VarError),
+    IoError(io::Error),
     EmptyDb,
     ErrRand,
 }
@@ -14,19 +14,24 @@ pub enum DbError {
 impl fmt::Display for DbError {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         match *self {
-            DbError::NoEnv => write!(f, "DB_PATH must be set in .env"),
-            DbError::ErrConnection => write!(f, "database file not found"),
-            DbError::ErrReading => write!(f, "error reading from database"),
+            DbError::VarError(ref error) => write!(f, "{}", error),
+            DbError::IoError(ref error) => write!(f, "{}", error),
             DbError::EmptyDb => write!(f, "database is empty"),
             DbError::ErrRand => write!(f, "error with rand"),
         }
     }
 }
 
-impl Error for DbError {}
+impl error::Error for DbError {}
 
-impl From<VarError> for DbError {
-    fn from(_: VarError) -> Self {
-        DbError::NoEnv
+impl From<env::VarError> for DbError {
+    fn from(error: env::VarError) -> Self {
+        DbError::VarError(error)
+    }
+}
+
+impl From<io::Error> for DbError {
+    fn from(error: io::Error) -> Self {
+        DbError::IoError(error)
     }
 }
