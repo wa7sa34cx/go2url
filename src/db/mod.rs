@@ -4,8 +4,8 @@ use dotenv::dotenv;
 use error::DbError;
 use rand::seq::SliceRandom;
 use std::env;
-use tokio::fs::File;
 use tokio::fs;
+use tokio::fs::File;
 
 type DbResult<T> = Result<T, DbError>;
 
@@ -24,7 +24,7 @@ impl Db {
         // Create full path to file
         let file = db_path + filename;
 
-        // If file opening doesn't return the Error, 
+        // If file opening doesn't return the Error,
         // so connection can be established
         let _f = File::open(&file).await?;
 
@@ -33,7 +33,7 @@ impl Db {
 
     pub async fn get_rand_line(&self) -> DbResult<String> {
         let contents = fs::read_to_string(&self.file).await?;
-            
+
         if contents.is_empty() {
             return Err(DbError::EmptyDb);
         }

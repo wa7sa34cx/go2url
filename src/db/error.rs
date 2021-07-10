@@ -1,7 +1,7 @@
-use std::fmt;
-use std::error;
-use std::io;
 use std::env;
+use std::error;
+use std::fmt;
+use std::io;
 
 #[derive(Debug)]
 pub enum DbError {

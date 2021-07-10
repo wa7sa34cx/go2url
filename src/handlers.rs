@@ -1,6 +1,6 @@
-use hyper::{Body, Request, Response, Result, StatusCode};
 use crate::app;
 use crate::validate;
+use hyper::{Body, Request, Response, Result, StatusCode};
 
 /// Method Not Allowed
 pub async fn method_not_allowed() -> Result<Response<Body>> {
