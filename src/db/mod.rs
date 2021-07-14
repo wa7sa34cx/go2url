@@ -47,3 +47,27 @@ impl Db {
         }
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[tokio::test]
+    async fn test_establish() {
+        let db = Db::establish("test.txt").await;
+        match db {
+            Ok(_) => return,
+            Err(e) => panic!("{}", e.to_string()),
+        }
+    }
+
+    #[tokio::test]
+    async fn test_get_rand_line() {
+        let db = Db::establish("test.txt").await.unwrap();
+        let line = db.get_rand_line().await.unwrap();
+        match &line[..] {
+            "https://google.com" | "https://facebook.com" | "https://amazon.com" => return,
+            _ => panic!("Can't get rand line from database"),
+        }
+    }
+}

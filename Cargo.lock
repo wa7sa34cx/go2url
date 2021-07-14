@@ -99,7 +99,7 @@ dependencies = [
 ]
 
 [[package]]
-name = "go2url-icu"
+name = "go2url"
 version = "0.1.0"
 dependencies = [
  "dotenv",

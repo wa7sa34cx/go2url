@@ -1,5 +1,5 @@
 [package]
-name = "go2url-icu"
+name = "go2url"
 version = "0.1.0"
 authors = ["Alex Black <wa7@sa34.cx>"]
 description = "Redirect to random URL in file"
