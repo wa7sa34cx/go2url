@@ -57,7 +57,7 @@ mod tests {
         let db = Db::establish("test.txt").await;
         match db {
             Ok(_) => return,
-            Err(e) => panic!("{}", e.to_string()),
+            Err(e) => panic!("{}", e),
         }
     }
 
