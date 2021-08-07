@@ -1,6 +1,8 @@
 use crate::app;
+use crate::error::AppError;
 use crate::validate;
 use hyper::{Body, Request, Response, Result, StatusCode};
+use std::fmt::Display;
 
 /// Method Not Allowed
 pub async fn method_not_allowed() -> Result<Response<Body>> {
@@ -11,10 +13,10 @@ pub async fn method_not_allowed() -> Result<Response<Body>> {
 }
 
 /// Internal Server Error
-pub async fn error(e: String) -> Result<Response<Body>> {
+pub async fn error<T: Display>(e: T) -> Result<Response<Body>> {
     Ok(Response::builder()
         .status(StatusCode::INTERNAL_SERVER_ERROR)
-        .body(Body::from(e))
+        .body(Body::from(e.to_string()))
         .unwrap())
 }
 
@@ -32,16 +34,16 @@ pub async fn hello() -> Result<Response<Body>> {
 pub async fn go(req: Request<Body>) -> Result<Response<Body>> {
     let filename = match req.uri().query() {
         Some(q) => q,
-        None => return error("Expected filename in query".to_owned()).await,
+        None => return error(AppError::EmptyQuery).await,
     };
 
     if !validate::txt_file(filename) {
-        return error("Invalid file name. Expected: example.txt".to_owned()).await;
+        return error(AppError::NotValidQuery).await;
     }
 
     let url = match app::get_rand_line_from_db(filename).await {
         Ok(line) => line,
-        Err(e) => return error(e.to_string()).await,
+        Err(e) => return error(e).await,
     };
 
     Ok(Response::builder()

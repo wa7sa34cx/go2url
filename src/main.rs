@@ -1,5 +1,6 @@
 mod app;
 mod db;
+mod error;
 mod handlers;
 mod service;
 mod validate;
