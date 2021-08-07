@@ -32,11 +32,11 @@ pub async fn hello() -> Result<Response<Body>> {
 pub async fn go(req: Request<Body>) -> Result<Response<Body>> {
     let filename = match req.uri().query() {
         Some(q) => q,
-        None => return error(String::from("Expected filename in query")).await,
+        None => return error("Expected filename in query".to_owned()).await,
     };
 
     if !validate::txt_file(filename) {
-        return error(String::from("Invalid file name. Expected: example.txt")).await;
+        return error("Invalid file name. Expected: example.txt".to_owned()).await;
     }
 
     let url = match app::get_rand_line_from_db(filename).await {
