@@ -6,23 +6,24 @@ use rand::seq::SliceRandom;
 use std::env;
 use tokio::fs;
 use tokio::fs::File;
+use std::path::PathBuf;
 
 type DbResult<T> = Result<T, DbError>;
 
 // My own simple file read based database
 #[derive(Debug)]
 pub struct Db {
-    file: String,
+    file: PathBuf,
 }
 
 impl Db {
     pub async fn establish(filename: &str) -> DbResult<Db> {
         // Specify in .env where the directory with files is located
         dotenv().ok();
-        let db_path = env::var("DB_PATH")?;
+        let mut file = PathBuf::from(env::var("DB_PATH")?);
 
         // Create full path to file
-        let file = db_path + filename;
+        file.push(filename);
 
         // If file opening doesn't return the Error,
         // so connection can be established
