@@ -4,9 +4,9 @@ use dotenv::dotenv;
 use error::DbError;
 use rand::seq::SliceRandom;
 use std::env;
+use std::path::PathBuf;
 use tokio::fs;
 use tokio::fs::File;
-use std::path::PathBuf;
 
 type DbResult<T> = Result<T, DbError>;
 
