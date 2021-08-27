@@ -2,7 +2,7 @@ use crate::app;
 use crate::error::AppError;
 use crate::validate;
 use hyper::{Body, Request, Response, Result, StatusCode};
-use std::fmt::Display;
+use std::error;
 
 /// Method Not Allowed
 pub async fn method_not_allowed() -> Result<Response<Body>> {
@@ -13,7 +13,7 @@ pub async fn method_not_allowed() -> Result<Response<Body>> {
 }
 
 /// Internal Server Error
-pub async fn error<T: Display>(e: T) -> Result<Response<Body>> {
+pub async fn error<T: error::Error>(e: T) -> Result<Response<Body>> {
     Ok(Response::builder()
         .status(StatusCode::INTERNAL_SERVER_ERROR)
         .body(Body::from(e.to_string()))
