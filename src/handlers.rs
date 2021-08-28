@@ -2,7 +2,7 @@ use crate::app;
 use crate::error::AppError;
 use crate::validate;
 use hyper::{Body, Request, Response, Result, StatusCode};
-use std::error;
+use std::{error, thread, time::Duration};
 
 /// Method Not Allowed
 pub async fn method_not_allowed() -> Result<Response<Body>> {
@@ -22,6 +22,12 @@ pub async fn error<T: error::Error>(e: T) -> Result<Response<Body>> {
 
 /// Health-check
 pub async fn health_check() -> Result<Response<Body>> {
+    Ok(Response::new(Body::empty()))
+}
+
+/// Long operation
+pub async fn long() -> Result<Response<Body>> {
+    thread::sleep(Duration::from_secs(10));
     Ok(Response::new(Body::empty()))
 }
 
