@@ -5,7 +5,7 @@ authors = ["Alex Black <wa7@sa34.cx>"]
 description = "Redirect to random URL in file"
 edition = "2018"
 license = "MIT OR Apache-2.0"
-repository = "https://github.com/wa7sa34cx/go2url-icu"
+repository = "https://github.com/wa7sa34cx/go2url"
 readme = "README.md"
 
 [dependencies]
