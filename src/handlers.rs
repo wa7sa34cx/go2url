@@ -13,9 +13,9 @@ pub async fn method_not_allowed() -> Result<Response<Body>> {
 }
 
 /// Internal Server Error
-pub async fn error<T>(e: T) -> Result<Response<Body>>
+pub async fn error<E>(e: E) -> Result<Response<Body>>
 where
-    T: error::Error,
+    E: error::Error,
 {
     Ok(Response::builder()
         .status(StatusCode::INTERNAL_SERVER_ERROR)
